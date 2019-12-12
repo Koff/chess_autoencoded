@@ -1,16 +1,11 @@
-from keras.layers import Input, Conv2D, MaxPooling2D, UpSampling2D
-from keras.models import Model
-
 import numpy as np
 
 import chess.pgn
 import chess.svg
 
-pgn = open("twic1309.pgn")
+files = ['twic1305.pgn', 'twic1306.pgn', 'twic1307.pgn', 'twic1308.pgn', 'twic1309.pgn']
 
 all_numerical_positions = []
-
-g = chess.pgn.read_game(pgn)
 
 dictionary_of_numerical_positions = {
     0: 'r',
@@ -43,25 +38,28 @@ dictionary_of_positions = {
     'K': ('black_king', 12)
 }
 
-while g is not None:
-    board = g.board()
-    board.reset()
-    for move in g.mainline_moves():
-        board.push(move)
-
-        a = board.__str__()
-        a = a.replace('\n', '').replace(' ', '')
-
-        numerical_position = []
-        for piece in a:
-            numerical_position.append([dictionary_of_positions[piece][1]])
-
-        all_numerical_positions.append(np.array(numerical_position))
-
+for f in files:
+    pgn = open("pgn_files/%s" % f)
     g = chess.pgn.read_game(pgn)
+
+    while g is not None:
+        board = g.board()
+        board.reset()
+        for move in g.mainline_moves():
+            board.push(move)
+
+            a = board.__str__()
+            a = a.replace('\n', '').replace(' ', '')
+
+            numerical_position = []
+            for piece in a:
+                numerical_position.append([dictionary_of_positions[piece][1]])
+
+            all_numerical_positions.append(np.array(numerical_position))
+
+        g = chess.pgn.read_game(pgn)
 
 all_numerical_positions = np.array(all_numerical_positions)
 all_numerical_positions = all_numerical_positions.reshape((-1, 8, 8, 1))
 
 np.save('x_data.npy', all_numerical_positions)
-
