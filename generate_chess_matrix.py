@@ -1,9 +1,8 @@
 import numpy as np
 
 import chess.pgn
-import chess.svg
 
-files = ['twic1305.pgn', 'twic1306.pgn', 'twic1307.pgn', 'twic1308.pgn', 'twic1309.pgn']
+files = ['twic1305.pgn', 'twic1306.pgn', 'twic1307.pgn', 'twic1308.pgn']
 
 all_numerical_positions = []
 
@@ -40,15 +39,28 @@ dictionary_of_positions = {
 
 for f in files:
     pgn = open("pgn_files/%s" % f)
-    g = chess.pgn.read_game(pgn)
+    try:
+        g = chess.pgn.read_game(pgn)
+    except:
+        continue
 
     while g is not None:
-        board = g.board()
-        board.reset()
-        for move in g.mainline_moves():
-            board.push(move)
+        try:
+            board = g.board()
+            board.reset()
+        except:
+            continue
 
-            a = board.__str__()
+        for move in g.mainline_moves():
+            try:
+                board.push(move)
+            except Exception:
+                continue
+            try:
+                a = board.__str__()
+            except Exception:
+                continue
+
             a = a.replace('\n', '').replace(' ', '')
 
             numerical_position = []
@@ -56,8 +68,10 @@ for f in files:
                 numerical_position.append([dictionary_of_positions[piece][1]])
 
             all_numerical_positions.append(np.array(numerical_position))
-
-        g = chess.pgn.read_game(pgn)
+        try:
+            g = chess.pgn.read_game(pgn)
+        except Exception:
+            continue
 
 all_numerical_positions = np.array(all_numerical_positions)
 all_numerical_positions = all_numerical_positions.reshape((-1, 8, 8, 1))
