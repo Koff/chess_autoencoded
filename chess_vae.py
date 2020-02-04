@@ -3,8 +3,7 @@ import keras
 
 from keras import Model
 from keras.layers import Input, Conv2D, UpSampling2D, AveragePooling2D, Dense
-from kerastuner.tuners import RandomSearch
-from kerastuner import HyperModel
+
 
 EPOCHS = 4
 BATCH_SIZE = 128
@@ -19,7 +18,6 @@ all_numerical_positions = np.load('x_data.npy')
 m = 4
 all_numerical_positions = (((all_numerical_positions[:, None] & (1 << np.arange(m)))) > 0).astype(int)
 all_numerical_positions = all_numerical_positions.reshape((-1, 8, 8, 4))
-
 
 
 # Input into encoder
@@ -61,7 +59,9 @@ vae = keras.Model(input_pos, outputs, name='vae_mlp')
 vae.summary()
 vae.compile(optimizer='adam', loss='mse')
 
-vae.fit(all_numerical_positions, all_numerical_positions)
+vae.fit(all_numerical_positions, all_numerical_positions,
+        epochs=EPOCHS,
+        batch_size=BATCH_SIZE)
 
 vae.save('models/vae_2_dimensions_encoded.h5')
 encoder.save('models/vae_only_encoder.h5')

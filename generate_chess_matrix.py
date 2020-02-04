@@ -4,74 +4,50 @@ import chess.pgn
 
 files = ['twic1305.pgn', 'twic1306.pgn', 'twic1307.pgn', 'twic1308.pgn']
 
+# We will store all positions here
 all_numerical_positions = []
 
-dictionary_of_numerical_positions = {
-    0: 'r',
+number_to_piece = {
+    0: 'r',  # lower case for white pieces
     1: 'n',
     2: 'b',
     3: 'q',
     4: 'k',
     5: 'p',
-    6: '.',
-    7: 'P',
+    6: '.',  # unoccupied square
+    7: 'P',  # capital letters for black pieces
     8: 'R',
     9: 'N',
     10: 'B',
     11: 'Q',
     12: 'K',
 }
-dictionary_of_positions = {
-    'r': ('white_rook', 0),
-    'n': ('white_knight', 1),
-    'b': ('white_bishop', 2),
-    'q': ('white_queen', 3),
-    'k': ('white_king', 4),
-    'p': ('white_pawn', 5),
-    '.': ('empty', 6),
-    'P': ('black_pawn', 7),
-    'R': ('black_rook', 8),
-    'N': ('black_knight', 9),
-    'B': ('black_bishop', 10),
-    'Q': ('black_queen', 11),
-    'K': ('black_king', 12)
-}
+
+# Reverse dictionary, given a piece 'K' return 12
+piece_to_number = inv_map = {v: k for k, v in number_to_piece.items()}
+
 
 for f in files:
     pgn = open("pgn_files/%s" % f)
-    try:
-        g = chess.pgn.read_game(pgn)
-    except:
-        continue
+    g = chess.pgn.read_game(pgn)
 
     while g is not None:
-        try:
-            board = g.board()
-            board.reset()
-        except:
-            continue
+        board = g.board()
+        board.reset()
 
         for move in g.mainline_moves():
-            try:
-                board.push(move)
-            except Exception:
-                continue
-            try:
-                a = board.__str__()
-            except Exception:
-                continue
+            board.push(move)
 
+            a = board.__str__()
             a = a.replace('\n', '').replace(' ', '')
 
             numerical_position = []
             for piece in a:
-                numerical_position.append([dictionary_of_positions[piece][1]])
+                numerical_position.append([piece_to_number[piece]])
 
             all_numerical_positions.append(np.array(numerical_position))
-        try:
-            g = chess.pgn.read_game(pgn)
-        except Exception:
-            continue
+
+        g = chess.pgn.read_game(pgn)
 
 all_numerical_positions = np.array(all_numerical_positions)
 all_numerical_positions = all_numerical_positions.reshape((-1, 8, 8, 1))

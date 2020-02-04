@@ -67,7 +67,5 @@ print_image_for_position_and_estimates(all_numerical_positions[100])
 a = encoder.predict(all_numerical_positions.reshape((-1, 8, 8, 4)))
 a = a.reshape(-1, 1)
 
-
-
 plt.scatter(a[:, 0], np.random.rand(1, len(a)), alpha=0.2, s=0.1)
 plt.show()
