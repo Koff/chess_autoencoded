@@ -25,9 +25,12 @@ all_numerical_positions = all_numerical_positions.reshape((-1, 64))
 input_pos = Input(shape=(64,))
 
 # "encoded" is the encoded representation of the input
-encoded = Dense(100, activation='linear')(input_pos)
-encoded = Dense(30, activation='linear')(encoded)
-encoded = Dense(10, activation='linear')(encoded)
+encoded = Conv2D(64 * 7, (3, 3), activation='tanh', padding='same')(input_pos)
+encoded = AveragePooling2D((2, 2), padding='same')(encoded)
+encoded = Conv2D(32 * 7, (3, 3), activation='tanh', padding='same')(encoded)
+encoded = AveragePooling2D((2, 2), padding='same')(encoded)
+encoded = Conv2D(16 * 7, (3, 3), activation='tanh', padding='same')(encoded)
+encoded = AveragePooling2D((2, 2), padding='same')(encoded)
 
 # Bottle neck
 encoded = Dense(MIDDLE_DIMENSIONS, activation='linear')(encoded)
@@ -36,11 +39,13 @@ encoded = Dense(MIDDLE_DIMENSIONS, activation='linear')(encoded)
 decoded_input = Input(shape=(MIDDLE_DIMENSIONS,))
 
 # Rest of decoder
-decoded = Dense(10, activation='linear')(decoded_input)
-decoded = Dense(30, activation='linear')(decoded)
-decoded = Dense(100, activation='linear')(decoded)
-
-decoded = Dense(64, activation='linear')(decoded)
+decoded = Conv2D(16 * 7, (3, 3), activation='tanh', padding='same')(decoded_input)
+decoded = UpSampling2D((2, 2))(decoded)
+decoded = Conv2D(32 * 7, (3, 3), activation='tanh', padding='same')(decoded)
+decoded = UpSampling2D((2, 2))(decoded)
+decoded = Conv2D(64 * 7, (3, 3), activation='tanh', padding='same')(decoded)
+decoded = UpSampling2D((2, 2))(decoded)
+decoded = Conv2D(7, (3, 3), activation='tanh', padding='same')(decoded)
 
 encoder = Model(input_pos, encoded, name='encoder')
 encoder.summary()
@@ -53,7 +58,7 @@ outputs = decoder(encoder(input_pos))
 vae = keras.Model(input_pos, outputs, name='vae_mlp')
 
 vae.summary()
-vae.compile(optimizer='adam', loss='categorical_crossentropy')
+vae.compile(optimizer='adam', loss='mean_squared_error')
 
 vae.fit(all_numerical_positions,
         all_numerical_positions,
