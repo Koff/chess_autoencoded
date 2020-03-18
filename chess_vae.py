@@ -6,7 +6,7 @@ from keras.layers import Input, Conv2D, UpSampling2D, AveragePooling2D, Dense, D
 
 EPOCHS = 30
 BATCH_SIZE = 4048
-MIDDLE_DIMENSIONS = 10
+MIDDLE_DIMENSIONS = 3
 test = False
 
 # Load chess positions data
@@ -25,9 +25,9 @@ all_numerical_positions = all_numerical_positions.reshape((-1, 64))
 input_pos = Input(shape=(64,))
 
 # "encoded" is the encoded representation of the input
-encoded = Dense(400, activation='linear')(input_pos)
-encoded = Dense(100, activation='linear')(encoded)
-encoded = Dense(25, activation='linear')(encoded)
+encoded = Dense(100, activation='linear')(input_pos)
+encoded = Dense(30, activation='linear')(encoded)
+encoded = Dense(10, activation='linear')(encoded)
 
 # Bottle neck
 encoded = Dense(MIDDLE_DIMENSIONS, activation='linear')(encoded)
@@ -36,9 +36,9 @@ encoded = Dense(MIDDLE_DIMENSIONS, activation='linear')(encoded)
 decoded_input = Input(shape=(MIDDLE_DIMENSIONS,))
 
 # Rest of decoder
-decoded = Dense(25, activation='linear')(decoded_input)
+decoded = Dense(10, activation='linear')(decoded_input)
+decoded = Dense(30, activation='linear')(decoded)
 decoded = Dense(100, activation='linear')(decoded)
-decoded = Dense(400, activation='linear')(decoded)
 
 decoded = Dense(64, activation='linear')(decoded)
 
