@@ -63,7 +63,6 @@ def print_position_for_input_a(input_a=0):
     for i, piece in enumerate(input_a):
         if piece != 6 and piece in dictionary_of_numerical_positions:
             b.set_piece_at(i, chess.Piece.from_symbol(dictionary_of_numerical_positions[piece]))
-
     print(b)
 
 
@@ -107,7 +106,5 @@ position_index = 1660
 
 predicted_position = predict_position(all_numerical_positions[position_index])
 
-create_board_with_position(all_numerical_positions[position_index], index=0)
-create_board_with_position(predicted_position, index=1)
-
-render_boards()
+print(all_numerical_positions[position_index])
+print(predicted_position)
