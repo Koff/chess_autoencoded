@@ -106,5 +106,5 @@ position_index = 1660
 
 predicted_position = predict_position(all_numerical_positions[position_index])
 
-print(all_numerical_positions[position_index])
-print(predicted_position)
+print_position_for_input_a(all_numerical_positions[position_index])
+print_position_for_input_a(predicted_position)
