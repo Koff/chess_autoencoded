@@ -37,17 +37,13 @@ all_numerical_positions = np.load('x_data.npy')
 all_numerical_positions = all_numerical_positions.reshape((-1, 64))
 
 
-def create_board_with_position(position, index):
+def create_board_with_position(position):
     pos = position.reshape(64)
     board = chess.Board()
     board.clear_board()
-
     for i, piece in enumerate(pos):
         if piece != 6 and piece in dictionary_of_numerical_positions:
             board.set_piece_at(i, chess.Piece.from_symbol(dictionary_of_numerical_positions[piece]))
-
-    svg_board = chess.svg.board(board=board)
-    svg2png(bytestring=svg_board, write_to='images/board%s.png' % index)
     return board
 
 
@@ -106,5 +102,5 @@ position_index = 1660
 
 predicted_position = predict_position(all_numerical_positions[position_index])
 
-print_position_for_input_a(all_numerical_positions[position_index])
-print_position_for_input_a(predicted_position)
+print(create_board_with_position(all_numerical_positions[position_index]))
+print(create_board_with_position(predicted_position))
