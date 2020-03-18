@@ -5,7 +5,7 @@ from keras import Model
 from keras.layers import Input, Conv2D, UpSampling2D, AveragePooling2D, Dense, Dropout
 
 EPOCHS = 30
-BATCH_SIZE = 4048
+BATCH_SIZE = 4096
 MIDDLE_DIMENSIONS = 3
 test = False
 
@@ -53,7 +53,7 @@ outputs = decoder(encoder(input_pos))
 vae = keras.Model(input_pos, outputs, name='vae_mlp')
 
 vae.summary()
-vae.compile(optimizer='adam', loss='mse')
+vae.compile(optimizer='adam', loss='categorical_crossentropy')
 
 vae.fit(all_numerical_positions,
         all_numerical_positions,
