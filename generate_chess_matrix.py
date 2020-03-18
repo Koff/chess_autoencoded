@@ -64,5 +64,3 @@ for file in os.listdir("pgn_files/"):
 all_numerical_positions = np.array(all_numerical_positions)
 all_numerical_positions = all_numerical_positions.reshape((-1, 8, 8, 1))
 np.save('x_data.npy', all_numerical_positions)
-
-

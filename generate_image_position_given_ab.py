@@ -99,6 +99,7 @@ def render_boards():
 
     plt.show()
 
+
 position_index = 1660
 
 

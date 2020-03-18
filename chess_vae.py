@@ -4,8 +4,8 @@ import keras
 from keras import Model
 from keras.layers import Input, Conv2D, UpSampling2D, AveragePooling2D, Dense, Dropout
 
-EPOCHS = 2
-BATCH_SIZE = 256
+EPOCHS = 4
+BATCH_SIZE = 2048
 MIDDLE_DIMENSIONS = 3
 test = False
 
