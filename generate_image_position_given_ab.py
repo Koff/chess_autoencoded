@@ -8,6 +8,8 @@ from keras.models import load_model
 from keras import backend as K
 from matplotlib import pyplot as plt
 
+MIDDLE_DIMENSIONS = 3
+
 dictionary_of_numerical_positions = {
     0: 'r',
     1: 'n',
@@ -27,8 +29,8 @@ dictionary_of_numerical_positions = {
 
 K.clear_session()
 
-decoder = load_model('models/middle_layer_3/vae_only_decoder.h5')
-encoder = load_model('models/middle_layer_3/vae_only_encoder.h5')
+decoder = load_model(f'models/middle_{MIDDLE_DIMENSIONS}/vae_only_decoder.h5')
+encoder = load_model(f'models/middle_{MIDDLE_DIMENSIONS}/vae_only_encoder.h5')
 
 # Load chess positions data
 all_numerical_positions = np.load('x_data.npy')
