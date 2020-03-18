@@ -61,6 +61,6 @@ vae.fit(all_numerical_positions,
         batch_size=BATCH_SIZE,
         verbose=1)
 
-vae.save('models/vae_2_dimensions_encoded.h5')
-encoder.save('models/vae_only_encoder.h5')
-decoder.save('models/vae_only_decoder.h5')
+vae.save(f'models/middle_{MIDDLE_DIMENSIONS}vae_all.h5')
+encoder.save(f'models/middle_{MIDDLE_DIMENSIONS}/vae_only_encoder.h5')
+decoder.save(f'models/middle_{MIDDLE_DIMENSIONS}/vae_only_decoder.h5')
