@@ -102,5 +102,8 @@ position_index = 1660
 
 predicted_position = predict_position(all_numerical_positions[position_index])
 
+print("Real\n")
 print(create_board_with_position(all_numerical_positions[position_index]))
+
+print("\n\nPredicted\n")
 print(create_board_with_position(predicted_position))
