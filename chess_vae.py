@@ -2,11 +2,12 @@ import numpy as np
 import keras
 
 from keras import Model
-from keras.layers import Input, Conv2D, UpSampling2D, AveragePooling2D, Dense, Dropout
+from keras.layers import Input, Conv2D, Dense, LeakyReLU, BatchNormalization, Reshape, \
+    Flatten, Conv2DTranspose, Activation
 
 EPOCHS = 30
 BATCH_SIZE = 4096
-MIDDLE_DIMENSIONS = 3
+MIDDLE_DIMENSIONS = 4
 test = False
 
 # Load chess positions data
@@ -18,19 +19,17 @@ if test:
     all_numerical_positions = all_numerical_positions[:int(np.floor(all_numerical_positions.shape[0] / 20)), :, :, :]
 
 
-all_numerical_positions = all_numerical_positions.reshape((-1, 64))
+all_numerical_positions = all_numerical_positions.reshape((-1, 8, 8, 1))
 
 
 # Input into encoder
-input_pos = Input(shape=(64,))
+input_pos = Input(shape=(8, 8, 1, ))
 
 # "encoded" is the encoded representation of the input
-encoded = Conv2D(64 * 7, (3, 3), activation='tanh', padding='same')(input_pos)
-encoded = AveragePooling2D((2, 2), padding='same')(encoded)
-encoded = Conv2D(32 * 7, (3, 3), activation='tanh', padding='same')(encoded)
-encoded = AveragePooling2D((2, 2), padding='same')(encoded)
-encoded = Conv2D(16 * 7, (3, 3), activation='tanh', padding='same')(encoded)
-encoded = AveragePooling2D((2, 2), padding='same')(encoded)
+encoded = Conv2D(filters=32, kernel_size=(2, 2), strides=1, padding='same')(input_pos)
+encoded = LeakyReLU(alpha=0.1)(encoded)
+encoded = BatchNormalization()(encoded)
+encoded = Flatten()(encoded)
 
 # Bottle neck
 encoded = Dense(MIDDLE_DIMENSIONS, activation='linear')(encoded)
@@ -39,13 +38,16 @@ encoded = Dense(MIDDLE_DIMENSIONS, activation='linear')(encoded)
 decoded_input = Input(shape=(MIDDLE_DIMENSIONS,))
 
 # Rest of decoder
-decoded = Conv2D(16 * 7, (3, 3), activation='tanh', padding='same')(decoded_input)
-decoded = UpSampling2D((2, 2))(decoded)
-decoded = Conv2D(32 * 7, (3, 3), activation='tanh', padding='same')(decoded)
-decoded = UpSampling2D((2, 2))(decoded)
-decoded = Conv2D(64 * 7, (3, 3), activation='tanh', padding='same')(decoded)
-decoded = UpSampling2D((2, 2))(decoded)
-decoded = Conv2D(7, (3, 3), activation='tanh', padding='same')(decoded)
+decoded = Dense(128)(decoded_input)
+decoded = Reshape((8, 8, 2, ))(decoded)
+decoded = Conv2DTranspose(filters=16, kernel_size=(2, 2), strides=1, padding='same')(decoded)
+decoded = LeakyReLU(alpha=0.1)(decoded)
+decoded = BatchNormalization()(decoded)
+decoded = Flatten()(decoded)
+decoded = Dense(64)(decoded)
+decoded = Reshape((8, 8, 1, ))(decoded)
+decoded = Activation('linear')(decoded)
+
 
 encoder = Model(input_pos, encoded, name='encoder')
 encoder.summary()
@@ -65,6 +67,7 @@ vae.fit(all_numerical_positions,
         epochs=EPOCHS,
         batch_size=BATCH_SIZE,
         verbose=1)
+
 
 vae.save(f'models/middle_{MIDDLE_DIMENSIONS}/vae_all.h5')
 encoder.save(f'models/middle_{MIDDLE_DIMENSIONS}/vae_only_encoder.h5')
