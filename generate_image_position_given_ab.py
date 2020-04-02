@@ -3,12 +3,11 @@ import chess
 import chess.svg
 import matplotlib.image as mpimg
 
-from cairosvg import svg2png
 from keras.models import load_model
 from keras import backend as K
 from matplotlib import pyplot as plt
 
-MIDDLE_DIMENSIONS = 3
+MIDDLE_DIMENSIONS = 4
 
 dictionary_of_numerical_positions = {
     0: 'r',
@@ -34,7 +33,7 @@ encoder = load_model(f'models/middle_{MIDDLE_DIMENSIONS}/vae_only_encoder.h5')
 
 # Load chess positions data
 all_numerical_positions = np.load('x_data.npy')
-all_numerical_positions = all_numerical_positions.reshape((-1, 64))
+all_numerical_positions = all_numerical_positions.reshape((-1, 8, 8, 1))
 
 
 def create_board_with_position(position):
@@ -63,7 +62,7 @@ def print_position_for_input_a(input_a=0):
 
 
 def predict_position(position):
-    predicted_position = np.round(decoder.predict(encoder.predict(position.reshape(1, 64))))
+    predicted_position = np.round(decoder.predict(encoder.predict(position.reshape(1, 8, 8, 1))))
     input_a = predicted_position.reshape(64)
     return input_a
 
