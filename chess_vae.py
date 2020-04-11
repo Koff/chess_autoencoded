@@ -6,7 +6,7 @@ from keras import Model
 from keras.layers import Input, Conv2D, Dense, LeakyReLU, BatchNormalization, Reshape, Flatten, Conv2DTranspose, \
     Activation
 
-EPOCHS = 30
+EPOCHS = 10
 BATCH_SIZE = 4096
 MIDDLE_DIMENSIONS = 64
 test = False
