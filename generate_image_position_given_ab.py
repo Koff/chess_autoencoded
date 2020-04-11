@@ -7,7 +7,7 @@ from keras.models import load_model
 from keras import backend as K
 from matplotlib import pyplot as plt
 
-MIDDLE_DIMENSIONS = 8
+MIDDLE_DIMENSIONS = 4
 
 dictionary_of_numerical_positions = {
     0: 'r',

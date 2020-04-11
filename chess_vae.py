@@ -7,7 +7,7 @@ from keras.layers import Input, Conv2D, Dense, Activation
 
 EPOCHS = 50
 BATCH_SIZE = 4096
-MIDDLE_DIMENSIONS = 8
+MIDDLE_DIMENSIONS = 4
 test = False
 
 # Load chess positions data
