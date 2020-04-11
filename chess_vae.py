@@ -3,8 +3,7 @@ import keras
 import os
 
 from keras import Model
-from keras.layers import Input, Conv2D, Dense, LeakyReLU, BatchNormalization, Reshape, Flatten, Conv2DTranspose, \
-    Activation
+from keras.layers import Input, Conv2D, Dense, Activation
 
 EPOCHS = 10
 BATCH_SIZE = 4096
@@ -41,7 +40,7 @@ decoded_input = Input(shape=(MIDDLE_DIMENSIONS,))
 decoded = Dense(150)(decoded_input)
 decoded = Dense(200)(decoded)
 decoded = Dense(300)(decoded)
-
+decoded = Dense(1)(decoded)
 
 encoder = Model(input_pos, encoded, name='encoder')
 encoder.summary()
