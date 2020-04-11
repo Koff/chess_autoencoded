@@ -1,5 +1,6 @@
 import numpy as np
 import keras
+import os
 
 from keras import Model
 from keras.layers import Input, Conv2D, Dense, LeakyReLU, BatchNormalization, Reshape, Flatten, Conv2DTranspose, \
@@ -26,10 +27,9 @@ all_numerical_positions = all_numerical_positions.reshape((-1, 8, 8, 1))
 input_pos = Input(shape=(8, 8, 1, ))
 
 # "encoded" is the encoded representation of the input
-encoded = Conv2D(filters=32, kernel_size=(2, 2), strides=1, padding='same')(input_pos)
-encoded = LeakyReLU(alpha=0.1)(encoded)
-encoded = BatchNormalization()(encoded)
-encoded = Flatten()(encoded)
+encoded = Dense(300)(input_pos)
+encoded = Dense(200)(encoded)
+encoded = Dense(150)(encoded)
 
 # Bottle neck
 encoded = Dense(MIDDLE_DIMENSIONS, activation='linear')(encoded)
@@ -38,15 +38,9 @@ encoded = Dense(MIDDLE_DIMENSIONS, activation='linear')(encoded)
 decoded_input = Input(shape=(MIDDLE_DIMENSIONS,))
 
 # Rest of decoder
-decoded = Dense(128)(decoded_input)
-decoded = Reshape((8, 8, 2, ))(decoded)
-decoded = Conv2DTranspose(filters=16, kernel_size=(2, 2), strides=1, padding='same')(decoded)
-decoded = LeakyReLU(alpha=0.1)(decoded)
-decoded = BatchNormalization()(decoded)
-decoded = Flatten()(decoded)
-decoded = Dense(64)(decoded)
-decoded = Reshape((8, 8, 1, ))(decoded)
-decoded = Activation('linear')(decoded)
+decoded = Dense(150)(decoded_input)
+decoded = Dense(200)(decoded)
+decoded = Dense(300)(decoded)
 
 
 encoder = Model(input_pos, encoded, name='encoder')
@@ -68,6 +62,10 @@ vae.fit(all_numerical_positions,
         batch_size=BATCH_SIZE,
         verbose=1)
 
+try:
+    os.mkdir(f'models/middle_{MIDDLE_DIMENSIONS}')
+except FileExistsError:
+    print('Directory already exists.')
 
 vae.save(f'models/middle_{MIDDLE_DIMENSIONS}/vae_all.h5')
 encoder.save(f'models/middle_{MIDDLE_DIMENSIONS}/vae_only_encoder.h5')
