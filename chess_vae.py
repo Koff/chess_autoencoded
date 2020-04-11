@@ -5,7 +5,7 @@ import os
 from keras import Model
 from keras.layers import Input, Conv2D, Dense, Activation
 
-EPOCHS = 10
+EPOCHS = 5
 BATCH_SIZE = 4096
 MIDDLE_DIMENSIONS = 64
 test = False
@@ -19,11 +19,11 @@ if test:
     all_numerical_positions = all_numerical_positions[:int(np.floor(all_numerical_positions.shape[0] / 20)), :, :, :]
 
 
-all_numerical_positions = all_numerical_positions.reshape((-1, 8, 8, 1))
+all_numerical_positions = all_numerical_positions.reshape((-1, 64))
 
 
 # Input into encoder
-input_pos = Input(shape=(8, 8, 1, ))
+input_pos = Input(shape=(64, ))
 
 # "encoded" is the encoded representation of the input
 encoded = Dense(300)(input_pos)
@@ -40,7 +40,7 @@ decoded_input = Input(shape=(MIDDLE_DIMENSIONS,))
 decoded = Dense(150)(decoded_input)
 decoded = Dense(200)(decoded)
 decoded = Dense(300)(decoded)
-decoded = Dense(1)(decoded)
+decoded = Dense(64)(decoded)
 
 encoder = Model(input_pos, encoded, name='encoder')
 encoder.summary()
